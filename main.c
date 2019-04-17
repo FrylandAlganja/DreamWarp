@@ -16,6 +16,7 @@ int main(int argc, char ** argv)
 {
   int start_ticks;
   Game.up = Game.down = Game.left = Game.right = false;
+  Game.tile_size = 48;
   int frame = 0;
   bool quit = false;
   Game.window_width = 720;
@@ -120,8 +121,7 @@ int main(int argc, char ** argv)
     center_camera(&u);
 
     SDL_RenderClear(renderer);
-    for (int i = 0; i < map.w * map.h; i++) {
-        printf("a, %d, %d", i, map.tiles[i].spr);
+    for (int i = 0; i < (map.w * map.h); i++) {
         draw_entity(&(map.tiles[i]), renderer, texture, &dst);
     }
     draw_entity(&u, renderer, texture, &dst);
