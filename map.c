@@ -5,6 +5,11 @@ Map create_map(int w, int h) {
     map.w = w;
     map.h = h;
     map.tiles = malloc(sizeof(Entity) * (w * h));
+    Entity tile;
+    tile.active = false;
+    for (int i = 0; i < w * h; i++) {
+        map.tiles[i] = tile;
+    }
     return map;
 };
 
@@ -20,6 +25,7 @@ void set_tile(Map *map, int x, int y, int type) {
     tile.h = Game.tile_size;
     tile.tile_x = x;
     tile.tile_y = y;
+    tile.active = true;
     tile.spr = SPR_FLOOR;
     switch (type) {
         case 1:
@@ -29,5 +35,5 @@ void set_tile(Map *map, int x, int y, int type) {
             tile.spr = SPR_WALL;
             break;
     }
-    map->tiles[y * map->w + x] = tile;
+    map->tiles[(y * map->w) + x] = tile;
 }

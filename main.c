@@ -36,16 +36,7 @@ int main(int argc, char ** argv)
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer,
   image);
 
-  Map map = create_map(10, 10);
-  for (int y = 0; y < map.h; y++) {
-      for (int x = 0; x < map.w; x++) {
-          if (x == 0 || y == 0 || x == map.w - 1 || y == map.h - 1) {
-              set_tile(&map, x, y, 2);
-          } else {
-              set_tile(&map, x, y, 1);
-          }
-      }
-  }
+  Map map = create_dungeon(16);
 
   Entity u = {.x = 0, .y = 0,
               .w = 48, .h = 48,
@@ -122,8 +113,11 @@ int main(int argc, char ** argv)
 
     SDL_RenderClear(renderer);
     for (int i = 0; i < (map.w * map.h); i++) {
-        draw_entity(&(map.tiles[i]), renderer, texture, &dst);
+        if (map.tiles[i].active) {
+            draw_entity(&map.tiles[i], renderer, texture, &dst);
+        }
     }
+    //quit = true;
     draw_entity(&u, renderer, texture, &dst);
     draw_entity(&chick, renderer, texture, &dst);
     SDL_RenderPresent(renderer);

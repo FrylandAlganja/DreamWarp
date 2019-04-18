@@ -20,14 +20,16 @@ struct EntityStruct {
   int x, y;
   int tile_x, tile_y;
   int w, h;
+  int tile_w, tile_h;
   int vx, vy;
   int spr;
   int type;
+  bool active;
 };
 
-int Entity_bottom(Entity *entity);
-int Entity_right(Entity *entity);
-bool Entity_collides(Entity *a, Entity *b);
+int bottom(Entity *entity);
+int right(Entity *entity);
+bool collides(Entity *a, Entity *b);
 
 void Entity_dst(SDL_Rect *dst, Entity *entity);
 
@@ -46,6 +48,7 @@ struct MapStruct {
 };
 
 Map create_map(int w, int h);
+Map create_dungeon(int room_count);
 void free_map();
 void set_tile(Map *map, int x, int y, int type);
 

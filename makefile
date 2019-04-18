@@ -1,4 +1,4 @@
-OBJS = main.c camera.c sprites.c map.c
+OBJS = main.c camera.c sprites.c map.c quad.c dungeon.c
 
 CC = gcc
 
