@@ -14,6 +14,11 @@
 #define MAX_BEINGS 100
 #define MAX_ROOMS 50
 
+#define NORTH 1
+#define EAST 2
+#define SOUTH 3
+#define WEST 4
+
 SDL_Rect sprites[7];
 void init_sprites();
 
@@ -46,6 +51,12 @@ void Entity_dst(SDL_Rect *dst, Entity *entity);
 
 struct Camera {
   int x, y;
+  bool bounded;
+  int x_speed;
+  int y_speed;
+  int transitioning;
+  Entity *room;
+  Entity *old_room;
 } camera;
 
 void init_camera();

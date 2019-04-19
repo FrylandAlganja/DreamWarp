@@ -57,6 +57,14 @@ int main(int argc, char ** argv)
   u->x = ur_tile->x;
   u->y = ur_tile->y;
 
+  for (int i = 0; i < map.room_count; i++) {
+      if (collides(u, &map.rooms[i])) {
+          camera.bounded = true;
+          camera.room = &map.rooms[i];
+      }
+  }
+
+
   Entity *chick = Map_addBeing(&map);
   chick->w = 24;
   chick->h = 22;
@@ -117,7 +125,6 @@ int main(int argc, char ** argv)
         }
         break;
     }
-
     u->vx = u->vy = 0;
 
     if (Game.up) {
@@ -134,12 +141,16 @@ int main(int argc, char ** argv)
     }
 
     for (int i = 0; i < map.being_count; i++) {
-        collision_list.tile_count = 0;
+        if (camera.transitioning) {
+            break;
+        }
         Entity *e = &map.beings[i];
         int tile_id = floor(e->y / Game.tile_size) *
             map.w + floor(e->x / Game.tile_size);
         Entity *e_tile = &map.tiles[tile_id];
         Entity new_e = *e;
+
+        collision_list.tile_count = 0;
         new_e.x = e->x + e->vx;
         new_e.y = e->y + e->vy;
 
@@ -152,22 +163,38 @@ int main(int argc, char ** argv)
                 }
             }
         }
-
+        
+        int old_x = e->x;
         e->x = e->x + e->vx;
         for (int j = 0; j < collision_list.tile_count; j++) {
+            if (e->vx == 0) {
+                break;
+            }
             while (collides(collision_list.tiles[j], e)) {
                 if (e->vx > 0) {
                     e->x = e->x - 1;
+                    if (e->x < old_x) {
+                        e->x = old_x;
+                        break;
+                    }
                 } else if (e->vx < 0) {
                     e->x = e->x + 1;
+                    if (e->x > old_x) {
+                        e->x = old_x;
+                        break;
+                    }
                 } else {
                     printf("no velocity");
                     break;
                 }
             }
         }
+
         e->y = e->y + e->vy;
         for (int j = 0; j < collision_list.tile_count; j++) {
+            if (e->vy == 0) {
+                break;
+            }
             while (collides(collision_list.tiles[j], e)) {
                 if (e->vy > 0) {
                     e->y = e->y - 1;
@@ -180,7 +207,34 @@ int main(int argc, char ** argv)
             }
         }
     }
-                    
+    
+    if (!camera.transitioning) {
+        for (int i = 0; i < map.room_count; i++) {
+            Entity *new_room = &map.rooms[i];
+            if (camera.room != new_room
+                && collides(u, new_room)) {
+                
+                if (bottom(u) > bottom(new_room) && u->vy < 0) {
+                    camera.transitioning = NORTH;
+                    u->y = bottom(new_room) - u->h;
+                } else if (u->x < new_room->x && u->vx > 0) {
+                    camera.transitioning = EAST;
+                    u->x = new_room->x;
+                } else if (u->y < new_room->y && u->vy > 0) {
+                    camera.transitioning = SOUTH;
+                    u->y = new_room->y;
+                } else if (right(u) > right(new_room) && u->vx < 0) {
+                    camera.transitioning = WEST;
+                    u->x = right(new_room) - u->w;
+                }
+                if (camera.transitioning) {
+                    camera.old_room = camera.room;
+                    camera.room = new_room;
+                    break;
+                }
+            }
+        }
+    }
 
     center_camera(u);
 

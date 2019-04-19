@@ -137,6 +137,13 @@ Map Map_createDungeon(int max_rooms) {
         r->x -= vals.min_x;
         r->y -= vals.min_y;
         dig_room(&dungeon, r->x, r->y, r->w, r->h);
+        // The following adds a room to the real map, and adjusts it's
+        // coordinates to measure in pixels instead of tiles
+        Entity *final_room = Map_addRoom(&dungeon);
+        final_room->x = r->x * Game.tile_size;
+        final_room->y = r->y * Game.tile_size;
+        final_room->w = r->w * Game.tile_size;
+        final_room->h = r->h * Game.tile_size;
         if (room_id > 0) {
             d->x -= vals.min_x;
             d->y -= vals.min_y;

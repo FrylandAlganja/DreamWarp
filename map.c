@@ -27,6 +27,7 @@ Entity *Map_addRoom(Map *map) {
     Entity room = Entity_create();
     map->room_count++;
     map->rooms[map->room_count - 1] = room;
+
     return &map->rooms[map->room_count - 1];
 }
 
