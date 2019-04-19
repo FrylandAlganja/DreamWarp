@@ -1,6 +1,6 @@
 #include "dreamwarp.h"
 
-Map create_map(int w, int h) {
+Map Map_create(int w, int h) {
     Map map;
     map.w = w;
     map.h = h;
@@ -10,14 +10,31 @@ Map create_map(int w, int h) {
     for (int i = 0; i < w * h; i++) {
         map.tiles[i] = tile;
     }
+    map.being_count = 0;
+    map.room_count = 0;
     return map;
 };
 
-void free_map(Map *map) {
+Entity *Map_addBeing(Map *map) {
+    Entity being = Entity_create();
+    map->being_count++;
+    map->beings[map->being_count - 1] = being;
+
+    return &map->beings[map->being_count - 1];
+}
+
+Entity *Map_addRoom(Map *map) {
+    Entity room = Entity_create();
+    map->room_count++;
+    map->rooms[map->room_count - 1] = room;
+    return &map->rooms[map->room_count - 1];
+}
+
+void Map_free(Map *map) {
     free(map->tiles);
 }
 
-void set_tile(Map *map, int x, int y, int type) {
+void Map_setTile(Map *map, int x, int y, int type) {
     Entity tile;
     tile.x = x * Game.tile_size;
     tile.y = y * Game.tile_size;
@@ -39,7 +56,7 @@ void set_tile(Map *map, int x, int y, int type) {
     map->tiles[(y * map->w) + x] = tile;
 }
 
-Entity *find_vacant_tile(Map *map) {
+Entity *Map_findVacantTile(Map *map) {
     Entity *tile;
     bool tile_found = false;
     int x = 0;
@@ -48,7 +65,8 @@ Entity *find_vacant_tile(Map *map) {
     while (!tile_found) {
         int x = rand() % map->w;
         int y = rand() % map->h;
-        tile = &(map->tiles[y * map->w + x]);
+        int tile_id = y * map->w + x;
+        tile = &(map->tiles[tile_id]);
 
         if (tile->active && tile->type == 1) {
             tile_found = true;

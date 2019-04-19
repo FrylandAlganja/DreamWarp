@@ -38,20 +38,24 @@ int main(int argc, char ** argv)
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer,
   image);
 
-  Map map = create_dungeon(16);
+  Map map = Map_createDungeon(16);
+  Entity *u = Map_addBeing(&map);
+  u->w = 48;
+  u->h = 48,
+  u->vx = 8;
+  u->vy = 8;
+  u->spr = SPR_WIZARD;
+  Entity *ur_tile = Map_findVacantTile(&map);
+  u->x = ur_tile->x;
+  u->y = ur_tile->y;
 
-  Entity u = {.x = 0, .y = 0,
-              .w = 48, .h = 48,
-              .vx = 8, .vy = 8,
-              .spr = SPR_WIZARD};
-  Entity *ur_tile = find_vacant_tile(&map);
-  printf("%d, %d\n", ur_tile->x, ur_tile->y);
-  u.x = ur_tile->x;
-  u.y = ur_tile->y;
-  Entity chick = {.x = 10, .y = 10, .w = 24, .h = 22, .spr = SPR_CHICKEN};
-  Entity *chick_tile = find_vacant_tile(&map);
-  chick.x = chick_tile->x;
-  chick.y = chick_tile->y;
+  Entity *chick = Map_addBeing(&map);
+  chick->w = 24;
+  chick->h = 22;
+  chick->spr = SPR_CHICKEN;
+  Entity *chick_tile = Map_findVacantTile(&map);
+  chick->x = chick_tile->x;
+  chick->y = chick_tile->y;
 
   SDL_Rect dst;
 
@@ -107,18 +111,18 @@ int main(int argc, char ** argv)
     }
 
     if (Game.up) {
-      u.y -= u.vy;
+      u->y -= u->vy;
     }
     if (Game.down) {
-      u.y += u.vy;
+      u->y += u->vy;
     }
     if (Game.left) {
-      u.x -= u.vx;
+      u->x -= u->vx;
     }
     if (Game.right) {
-      u.x += u.vx;
+      u->x += u->vx;
     }
-    center_camera(&u);
+    center_camera(u);
 
     SDL_RenderClear(renderer);
     for (int i = 0; i < (map.w * map.h); i++) {
@@ -126,9 +130,8 @@ int main(int argc, char ** argv)
             draw_entity(&map.tiles[i], renderer, texture, &dst);
         }
     }
-    //quit = true;
-    draw_entity(&u, renderer, texture, &dst);
-    draw_entity(&chick, renderer, texture, &dst);
+    draw_entity(u, renderer, texture, &dst);
+    draw_entity(chick, renderer, texture, &dst);
     SDL_RenderPresent(renderer);
     int end_ticks = SDL_GetTicks() - start_ticks;
     if (end_ticks < 1000 / FRAME_RATE) {
@@ -136,7 +139,7 @@ int main(int argc, char ** argv)
     }
   }
 
-  free_map(&map);
+  Map_free(&map);
   SDL_DestroyTexture(texture);
   SDL_FreeSurface(image);
   SDL_DestroyRenderer(renderer);

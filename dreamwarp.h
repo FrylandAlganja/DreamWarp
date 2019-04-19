@@ -11,6 +11,9 @@
 #define SPR_WIZARD 5
 #define SPR_CHICKEN 6
 
+#define MAX_BEINGS 100
+#define MAX_ROOMS 50
+
 SDL_Rect sprites[7];
 void init_sprites();
 
@@ -32,6 +35,8 @@ struct EntityStruct {
   bool active;
 };
 
+Entity Entity_create();
+
 int bottom(Entity *entity);
 int right(Entity *entity);
 bool collides(Entity *a, Entity *b);
@@ -50,13 +55,19 @@ typedef struct MapStruct Map;
 struct MapStruct {
     int w, h;
     Entity *tiles;
+    int being_count;
+    Entity beings[MAX_BEINGS];
+    int room_count;
+    Entity rooms[MAX_ROOMS];
 };
 
-Map create_map(int w, int h);
-Map create_dungeon(int room_count);
-void free_map();
-void set_tile(Map *map, int x, int y, int type);
-Entity *find_vacant_tile(Map *map);
+Map Map_create(int w, int h);
+Map Map_createDungeon(int room_count);
+void Map_free();
+void Map_setTile(Map *map, int x, int y, int type);
+Entity *Map_findVacantTile(Map *map);
+Entity *Map_addBeing(Map *map);
+Entity *Map_addRoom(Map *map);
 
 struct GameStruct {
     bool up, down, left, right;

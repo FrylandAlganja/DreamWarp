@@ -41,15 +41,15 @@ void dig_room(Map *map, int x, int y, int w, int h) {
         for (int i = x; i < x + w; i++) {
             printf("%d, %d, %d, %d\n", i, j, map->w, map->h);
             if (j == y || i == x || j == y + h - 1 || i == x + w - 1) {
-                set_tile(map, i, j, 2);
+                Map_setTile(map, i, j, 2);
             } else {
-                set_tile(map, i, j, 1);
+                Map_setTile(map, i, j, 1);
             }
         }
     }
 }
 
-Map create_dungeon(int max_rooms) {
+Map Map_createDungeon(int max_rooms) {
     DungeonValues vals;
     vals.room_width = 15;
     vals.room_height = 9;
@@ -128,7 +128,7 @@ Map create_dungeon(int max_rooms) {
             }
         }
     }
-    Map dungeon = create_map(1 + vals.max_x - vals.min_x,
+    Map dungeon = Map_create(1 + vals.max_x - vals.min_x,
                              1 + vals.max_y - vals.min_y);
     int room_id = 0;
     while (room_id < vals.room_count) {
@@ -142,7 +142,7 @@ Map create_dungeon(int max_rooms) {
             d->y -= vals.min_y;
             for (int y = d->y; y <= bottom(d); y++) {
                 for (int x = d->x; x <= right(d); x++) {
-                    set_tile(&dungeon, x, y, 1);
+                    Map_setTile(&dungeon, x, y, 1);
                 }
             }
         }
