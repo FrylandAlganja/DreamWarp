@@ -12,11 +12,13 @@ struct DungeonValuesStruct {
     int max_rooms;
     int room_count;
     Entity rooms[20];
+    Entity doors[20];
 };
 
-void add_room(DungeonValues *vals, Entity room) {
+void add_room(DungeonValues *vals, Entity room, Entity door) {
     vals->room_count++;
     vals->rooms[vals->room_count - 1] = room;
+    vals->doors[vals->room_count - 1] = door;
 }
 
 void update_min_max(DungeonValues *vals, Entity *new_room) {
@@ -60,6 +62,7 @@ Map create_dungeon(int max_rooms) {
 
     for (int i = 0; i < vals.max_rooms; i++) {
         Entity room;
+        Entity door;
         int tries = 0;
         int max_tries = 20;
         bool success = false;
@@ -70,24 +73,42 @@ Map create_dungeon(int max_rooms) {
                 room.x = 0;
                 room.y = 0;
                 update_min_max(&vals, &room);
-                add_room(&vals, room);
+                door.active = false;
+                add_room(&vals, room, door);
                 break;
             }
+            door.active = true;
 
             Entity *parent_room = &vals.rooms[rand() % i];
             int chance = rand() % 4;
-            if (chance == 0) {
+            if (chance == 0) { //room is north of parent
                 room.x = parent_room->x;
                 room.y = parent_room->y - room.h;
-            } else if (chance == 1) {
+                door.x = room.x + 7;
+                door.y = bottom(&room);
+                door.w = 1;
+                door.h = 2;
+            } else if (chance == 1) { //room is east of parent
                 room.x = right(parent_room) + 1;
                 room.y = parent_room->y;
-            } else if (chance == 2) {
+                door.x = right(parent_room);
+                door.y = parent_room->y + 4;
+                door.w = 2;
+                door.h = 1;
+            } else if (chance == 2) { //room is south of parent
                 room.x = parent_room->x;
                 room.y = bottom(parent_room) + 1;
-            } else if (chance == 3) {
+                door.x = room.x + 7;
+                door.y = bottom(parent_room);
+                door.w = 1;
+                door.h = 2;
+            } else if (chance == 3) { //room is west of parent
                 room.x = parent_room->x - room.w;
                 room.y = parent_room->y;
+                door.x = parent_room->x - 1;
+                door.y = parent_room->y + 4;
+                door.w = 2;
+                door.h = 1;
             }
 
             int good = true;
@@ -102,7 +123,7 @@ Map create_dungeon(int max_rooms) {
             }
             if (good) {
                 update_min_max(&vals, &room);
-                add_room(&vals, room);
+                add_room(&vals, room, door);
                 tries = max_tries;
             }
         }
@@ -112,10 +133,19 @@ Map create_dungeon(int max_rooms) {
     int room_id = 0;
     while (room_id < vals.room_count) {
         Entity *r = &(vals.rooms[room_id]);
+        Entity *d = &(vals.doors[room_id]);
         r->x -= vals.min_x;
         r->y -= vals.min_y;
-        printf("x: %d, y: %d, w: %d, h: %d\n", r->x, r->y, r->w, r->h);
         dig_room(&dungeon, r->x, r->y, r->w, r->h);
+        if (room_id > 0) {
+            d->x -= vals.min_x;
+            d->y -= vals.min_y;
+            for (int y = d->y; y <= bottom(d); y++) {
+                for (int x = d->x; x <= right(d); x++) {
+                    set_tile(&dungeon, x, y, 1);
+                }
+            }
+        }
         room_id++;
     }
 
