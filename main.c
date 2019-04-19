@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include "dreamwarp.h"
 
@@ -14,6 +15,7 @@ void draw_entity(Entity *entity, SDL_Renderer *renderer, SDL_Texture *texture,
 
 int main(int argc, char ** argv)
 {
+  srand(time(0));
   int start_ticks;
   Game.up = Game.down = Game.left = Game.right = false;
   Game.tile_size = 48;
@@ -42,7 +44,14 @@ int main(int argc, char ** argv)
               .w = 48, .h = 48,
               .vx = 8, .vy = 8,
               .spr = SPR_WIZARD};
+  Entity *ur_tile = find_vacant_tile(&map);
+  printf("%d, %d\n", ur_tile->x, ur_tile->y);
+  u.x = ur_tile->x;
+  u.y = ur_tile->y;
   Entity chick = {.x = 10, .y = 10, .w = 24, .h = 22, .spr = SPR_CHICKEN};
+  Entity *chick_tile = find_vacant_tile(&map);
+  chick.x = chick_tile->x;
+  chick.y = chick_tile->y;
 
   SDL_Rect dst;
 

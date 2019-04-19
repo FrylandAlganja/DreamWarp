@@ -25,6 +25,7 @@ void set_tile(Map *map, int x, int y, int type) {
     tile.h = Game.tile_size;
     tile.tile_x = x;
     tile.tile_y = y;
+    tile.type = type;
     tile.active = true;
     tile.spr = SPR_FLOOR;
     switch (type) {
@@ -36,4 +37,23 @@ void set_tile(Map *map, int x, int y, int type) {
             break;
     }
     map->tiles[(y * map->w) + x] = tile;
+}
+
+Entity *find_vacant_tile(Map *map) {
+    Entity *tile;
+    bool tile_found = false;
+    int x = 0;
+    int y = 0;
+
+    while (!tile_found) {
+        int x = rand() % map->w;
+        int y = rand() % map->h;
+        tile = &(map->tiles[y * map->w + x]);
+
+        if (tile->active && tile->type == 1) {
+            tile_found = true;
+        }
+    }
+
+    return tile;
 }

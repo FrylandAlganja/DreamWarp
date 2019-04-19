@@ -14,6 +14,11 @@
 SDL_Rect sprites[7];
 void init_sprites();
 
+typedef struct PointStruct Point;
+struct PointStruct {
+    int x, y;
+};
+
 typedef struct EntityStruct Entity;
 
 struct EntityStruct {
@@ -51,6 +56,7 @@ Map create_map(int w, int h);
 Map create_dungeon(int room_count);
 void free_map();
 void set_tile(Map *map, int x, int y, int type);
+Entity *find_vacant_tile(Map *map);
 
 struct GameStruct {
     bool up, down, left, right;
