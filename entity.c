@@ -10,6 +10,7 @@ Entity Entity_create() {
     entity.h = 0;
     entity.tile_w = 0;
     entity.tile_h = 0;
+    entity.speed = 0;
     entity.vx = 0;
     entity.vy = 0;
     entity.spr = 0;

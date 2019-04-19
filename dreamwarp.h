@@ -30,6 +30,7 @@ struct EntityStruct {
   int w, h;
   int tile_w, tile_h;
   int vx, vy;
+  int speed;
   int spr;
   int type;
   bool active;

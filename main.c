@@ -5,7 +5,14 @@
 
 #include "dreamwarp.h"
 
+#define MAX_COLLISIONS 50
+
 const int FRAME_RATE = 60;
+
+struct CollisionList {
+    int tile_count;
+    Entity *tiles[50];
+} collision_list;
 
 void draw_entity(Entity *entity, SDL_Renderer *renderer, SDL_Texture *texture,
                  SDL_Rect *dst) {
@@ -42,8 +49,9 @@ int main(int argc, char ** argv)
   Entity *u = Map_addBeing(&map);
   u->w = 48;
   u->h = 48,
-  u->vx = 8;
-  u->vy = 8;
+  u->speed = 8;
+  u->vx = 0;
+  u->vy = 0;
   u->spr = SPR_WIZARD;
   Entity *ur_tile = Map_findVacantTile(&map);
   u->x = ur_tile->x;
@@ -110,18 +118,70 @@ int main(int argc, char ** argv)
         break;
     }
 
+    u->vx = u->vy = 0;
+
     if (Game.up) {
-      u->y -= u->vy;
+      u->vy = -u->speed;
     }
     if (Game.down) {
-      u->y += u->vy;
+      u->vy = u->speed;
     }
     if (Game.left) {
-      u->x -= u->vx;
+      u->vx = -u->speed;
     }
     if (Game.right) {
-      u->x += u->vx;
+      u->vx = u->speed;
     }
+
+    for (int i = 0; i < map.being_count; i++) {
+        collision_list.tile_count = 0;
+        Entity *e = &map.beings[i];
+        int tile_id = floor(e->y / Game.tile_size) *
+            map.w + floor(e->x / Game.tile_size);
+        Entity *e_tile = &map.tiles[tile_id];
+        Entity new_e = *e;
+        new_e.x = e->x + e->vx;
+        new_e.y = e->y + e->vy;
+
+        for (int y = e_tile->tile_y - 1; y <= e_tile->tile_y + 1; y++) {
+            for (int x = e_tile->tile_x - 1; x <= e_tile->tile_x + 1; x++) {
+                Entity *tile = &map.tiles[y * map.w + x];
+                if (tile->active && tile->type == 2 && collides(tile, &new_e)) {
+                    collision_list.tiles[collision_list.tile_count] = tile;
+                    collision_list.tile_count++;
+                }
+            }
+        }
+
+        e->x = e->x + e->vx;
+        for (int j = 0; j < collision_list.tile_count; j++) {
+            while (collides(collision_list.tiles[j], e)) {
+                if (e->vx > 0) {
+                    e->x = e->x - 1;
+                } else if (e->vx < 0) {
+                    e->x = e->x + 1;
+                } else {
+                    printf("no velocity");
+                    break;
+                }
+            }
+        }
+        e->y = e->y + e->vy;
+        for (int j = 0; j < collision_list.tile_count; j++) {
+            while (collides(collision_list.tiles[j], e)) {
+                if (e->vy > 0) {
+                    e->y = e->y - 1;
+                } else if (e->vy < 0) {
+                    e->y = e->y + 1;
+                } else {
+                    printf("no velocity");
+                    break;
+                }
+            }
+        }
+    }
+                    
+
     center_camera(u);
 
     SDL_RenderClear(renderer);
