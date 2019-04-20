@@ -64,14 +64,13 @@ int main(int argc, char ** argv)
       }
   }
 
-
-  Entity *chick = Map_addBeing(&map);
-  chick->w = 24;
-  chick->h = 22;
-  chick->spr = SPR_CHICKEN;
-  Entity *chick_tile = Map_findVacantTile(&map);
-  chick->x = chick_tile->x;
-  chick->y = chick_tile->y;
+  for (int i = 0; i < 100; i++) {
+      Entity *chick = Map_addBeing(&map);
+      *chick = Chicken_create();
+      Entity *chick_tile = Map_findVacantTile(&map);
+      chick->x = chick_tile->x;
+      chick->y = chick_tile->y;
+  }
 
   SDL_Rect dst;
 
@@ -141,6 +140,7 @@ int main(int argc, char ** argv)
     }
 
     for (int i = 0; i < map.being_count; i++) {
+        map.beings[i].update(&map.beings[i]);
         if (camera.transitioning) {
             break;
         }
@@ -245,7 +245,9 @@ int main(int argc, char ** argv)
         }
     }
     draw_entity(u, renderer, texture, &dst);
-    draw_entity(chick, renderer, texture, &dst);
+    for (int i = 0; i < map.being_count; i++) {
+        draw_entity(&map.beings[i], renderer, texture, &dst);
+    }
     SDL_RenderPresent(renderer);
     int end_ticks = SDL_GetTicks() - start_ticks;
     if (end_ticks < 1000 / FRAME_RATE) {

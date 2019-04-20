@@ -15,3 +15,23 @@ int bottom (Entity *e) {
 int right (Entity *e) {
     return e->x + e->w - 1;
 }
+
+Entity direction_delta(int direction) {
+    Entity e = Entity_create();
+    if (direction == NORTH) {
+        e.x = 0;
+        e.y = -1;
+    } else if (direction == EAST) {
+        e.x = 1;
+        e.y = 0;
+    } else if (direction == SOUTH) {
+        e.x = 0;
+        e.y = 1;
+    } else if (direction == WEST) {
+        e.x = -1;
+        e.y = 0;
+    } else {
+        printf("%d is not a direction", direction);
+    }
+    return e;
+}

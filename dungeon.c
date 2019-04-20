@@ -39,7 +39,6 @@ void update_min_max(DungeonValues *vals, Entity *new_room) {
 void dig_room(Map *map, int x, int y, int w, int h) {
     for (int j = y; j < y + h; j++) {
         for (int i = x; i < x + w; i++) {
-            printf("%d, %d, %d, %d\n", i, j, map->w, map->h);
             if (j == y || i == x || j == y + h - 1 || i == x + w - 1) {
                 Map_setTile(map, i, j, 2);
             } else {
