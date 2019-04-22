@@ -38,7 +38,7 @@ void Chicken_update(Entity *self) {
             self->move_distance = (rand() % 4) + 1;
         }
         if (self->action_duration < 8 * self->move_distance) {
-            Entity delta = direction_delta(self->facing);
+            Point delta = direction_delta(self->facing);
             self->vx = delta.x * self->speed;
             self->vy = delta.y * self->speed;
         } else {

@@ -31,6 +31,12 @@ struct PointStruct {
     int x, y;
 };
 
+typedef struct BoxStruct Box;
+struct BoxStruct {
+    int x, y;
+    int w, h;
+};
+
 typedef struct EntityStruct Entity;
 
 struct EntityStruct {
@@ -56,7 +62,7 @@ Entity Chicken_create();
 int bottom(Entity *entity);
 int right(Entity *entity);
 bool collides(Entity *a, Entity *b);
-Entity direction_delta(int direction);
+Point direction_delta(int direction);
 
 void Entity_dst(SDL_Rect *dst, Entity *entity);
 

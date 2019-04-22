@@ -57,6 +57,7 @@ int main(int argc, char ** argv)
   u->x = ur_tile->x;
   u->y = ur_tile->y;
 
+
   for (int i = 0; i < map.room_count; i++) {
       if (collides(u, &map.rooms[i])) {
           camera.bounded = true;
@@ -154,55 +155,38 @@ int main(int argc, char ** argv)
         new_e.x = e->x + e->vx;
         new_e.y = e->y + e->vy;
 
-        for (int y = e_tile->tile_y - 1; y <= e_tile->tile_y + 1; y++) {
-            for (int x = e_tile->tile_x - 1; x <= e_tile->tile_x + 1; x++) {
+        for (int y = e_tile->tile_y - 2; y <= e_tile->tile_y + 2; y++) {
+            for (int x = e_tile->tile_x - 2; x <= e_tile->tile_x + 2; x++) {
                 Entity *tile = &map.tiles[y * map.w + x];
-                if (tile->active && tile->type == 2 && collides(tile, &new_e)) {
+                if (tile->active && tile->type == 2 && collides(&new_e, tile)) {
                     collision_list.tiles[collision_list.tile_count] = tile;
                     collision_list.tile_count++;
                 }
             }
         }
         
-        int old_x = e->x;
-        e->x = e->x + e->vx;
-        for (int j = 0; j < collision_list.tile_count; j++) {
-            if (e->vx == 0) {
-                break;
-            }
-            while (collides(collision_list.tiles[j], e)) {
-                if (e->vx > 0) {
-                    e->x = e->x - 1;
-                    if (e->x < old_x) {
-                        e->x = old_x;
-                        break;
+        if (e->vx != 0) {
+            e->x = e->x + e->vx;
+            for (int j = 0; j < collision_list.tile_count; j++) {
+                while (collides(e, collision_list.tiles[j])) {
+                    if (e->vx > 0) {
+                        e->x = e->x - 1;
+                    } else if (e->vx < 0) {
+                        e->x = e->x + 1;
                     }
-                } else if (e->vx < 0) {
-                    e->x = e->x + 1;
-                    if (e->x > old_x) {
-                        e->x = old_x;
-                        break;
-                    }
-                } else {
-                    printf("no velocity");
-                    break;
                 }
             }
         }
 
-        e->y = e->y + e->vy;
-        for (int j = 0; j < collision_list.tile_count; j++) {
-            if (e->vy == 0) {
-                break;
-            }
-            while (collides(collision_list.tiles[j], e)) {
-                if (e->vy > 0) {
-                    e->y = e->y - 1;
-                } else if (e->vy < 0) {
-                    e->y = e->y + 1;
-                } else {
-                    printf("no velocity");
-                    break;
+        if (e->vy != 0) {
+            e->y = e->y + e->vy;
+            for (int j = 0; j < collision_list.tile_count; j++) {
+                while (collides(e, collision_list.tiles[j])) {
+                    if (e->vy > 0) {
+                        e->y = e->y - 1;
+                    } else if (e->vy < 0) {
+                        e->y = e->y + 1;
+                    }
                 }
             }
         }
@@ -244,7 +228,6 @@ int main(int argc, char ** argv)
             draw_entity(&map.tiles[i], renderer, texture, &dst);
         }
     }
-    draw_entity(u, renderer, texture, &dst);
     for (int i = 0; i < map.being_count; i++) {
         draw_entity(&map.beings[i], renderer, texture, &dst);
     }
