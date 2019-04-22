@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include "dreamwarp.h"
+#include "libbmp.h"
 
 #define MAX_COLLISIONS 50
 
@@ -18,6 +19,14 @@ void draw_entity(Entity *entity, SDL_Renderer *renderer, SDL_Texture *texture,
                  SDL_Rect *dst) {
     Entity_dst(dst, entity);
     SDL_RenderCopy(renderer, texture, &sprites[entity->spr], dst);
+}
+
+void set_pixel(SDL_Surface* surface, int x, int y, int r, int g, int b) {
+    unsigned char* pixels = (unsigned char*)surface->pixels;
+    pixels[4 * (y * surface->w + x) + 0] = b;
+    pixels[4 * (y * surface->w + x) + 1] = g;
+    pixels[4 * (y * surface->w + x) + 2] = r;
+    pixels[4 * (y * surface->w + x) + 3] = 255;
 }
 
 int main(int argc, char ** argv)
@@ -46,6 +55,37 @@ int main(int argc, char ** argv)
   image);
 
   Map map = Map_createDungeon(16);
+  bmp_img img;
+  bmp_img_init_df(&img, map.w * 2, map.h * 2);
+  
+  for (int y = 0; y < map.h; y++) {
+      for (int x = 0; x < map.w; x++) {
+          int r, g, b;
+          Entity *tile = &map.tiles[y * map.w + x];
+          if (tile->active) {
+              if (tile->type == 1) {
+                  r = g = b = 193;
+              } else if (tile->type == 2) {
+                  r = 22;
+                  g = 40;
+                  b = 81;
+              }
+          } else {
+              r = g = b = 0;
+          }
+          bmp_pixel_init(&img.img_pixels[y * 2][x * 2], r, g, b);
+          bmp_pixel_init(&img.img_pixels[y * 2][x * 2 + 1], r, g, b);
+          bmp_pixel_init(&img.img_pixels[y * 2 + 1][x * 2], r, g, b);
+          bmp_pixel_init(&img.img_pixels[y * 2 + 1][x * 2 + 1], r, g, b);
+      }
+  }
+  bmp_img_write(&img, "test.bmp");
+  bmp_img_free(&img);
+
+
+  SDL_Surface *minimap_image = IMG_Load("test.bmp");
+  SDL_Texture *minimap_texture = SDL_CreateTextureFromSurface(renderer, minimap_image);
+
   Entity *u = Map_addBeing(&map);
   u->w = 48;
   u->h = 48,
@@ -74,11 +114,16 @@ int main(int argc, char ** argv)
   }
 
   SDL_Rect dst;
+  SDL_Rect minimap_dst;
+  minimap_dst.x = Game.window_width - (map.w * 2);
+  minimap_dst.y = Game.window_height - (map.h * 2);
+  minimap_dst.w = map.w * 2;
+  minimap_dst.h = map.h * 2;
+  
 
   while (!quit)
   {
     start_ticks = SDL_GetTicks();
-    SDL_Rect *src = &sprites[SPR_CHICKEN];
     SDL_PollEvent(&event);
 
     switch (event.type)
@@ -157,8 +202,15 @@ int main(int argc, char ** argv)
 
         for (int y = e_tile->tile_y - 2; y <= e_tile->tile_y + 2; y++) {
             for (int x = e_tile->tile_x - 2; x <= e_tile->tile_x + 2; x++) {
+                if (y < 0 || x < 0 || y >= map.h || x >= map.w) {
+                    continue;
+                }
+
                 Entity *tile = &map.tiles[y * map.w + x];
-                if (tile->active && tile->type == 2 && collides(&new_e, tile)) {
+                if (!tile->active) {
+                    continue;
+                }
+                if (tile->type == 2 && collides(&new_e, tile)) {
                     collision_list.tiles[collision_list.tile_count] = tile;
                     collision_list.tile_count++;
                 }
@@ -231,6 +283,12 @@ int main(int argc, char ** argv)
     for (int i = 0; i < map.being_count; i++) {
         draw_entity(&map.beings[i], renderer, texture, &dst);
     }
+    SDL_RenderCopy(renderer, minimap_texture, NULL, &minimap_dst);
+    dst.x = floor(u->x / 24) + minimap_dst.x;
+    dst.y = floor(u->y / 24) + minimap_dst.y;
+    dst.w = 2;
+    dst.h = 2;
+    SDL_RenderCopy(renderer, texture, &sprites[1], &dst);
     SDL_RenderPresent(renderer);
     int end_ticks = SDL_GetTicks() - start_ticks;
     if (end_ticks < 1000 / FRAME_RATE) {
