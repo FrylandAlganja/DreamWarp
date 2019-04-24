@@ -50,8 +50,8 @@ void dig_room(Map *map, int x, int y, int w, int h) {
 
 Map Map_createDungeon(int max_rooms) {
     DungeonValues vals;
-    vals.room_width = 30;
-    vals.room_height = 18;
+    vals.room_width = 15;
+    vals.room_height = 9;
     vals.min_x = 0;
     vals.min_y = 0;
     vals.max_x = 0;
@@ -66,8 +66,8 @@ Map Map_createDungeon(int max_rooms) {
         int max_tries = 20;
         bool success = false;
         while (tries < max_tries) {
-            room.w = vals.room_width * ((rand() % 2) + 1);
-            room.h = vals.room_height * ((rand() % 2) + 1);
+            room.w = vals.room_width;// * ((rand() % 2) + 1);
+            room.h = vals.room_height;// * ((rand() % 2) + 1);
             if (i == 0) {
                 room.x = 0;
                 room.y = 0;

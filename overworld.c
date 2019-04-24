@@ -25,7 +25,7 @@ struct MapDraftStruct {
 
 int MapDraft_createRoom(MapDraft *map_draft, int x, int y, int entrance_dir, int chance) {
     RoomDraft *cell = &map_draft->cells[y * map_draft->w + x];
-    chance = 2;
+    chance = chance + 1;
     if (cell->used) {
         return 0;
     }
@@ -84,7 +84,7 @@ void MapDraft_free(MapDraft *draft) {
 }
 
 int main() {
-    setlocale(LC_CTYPE, "");
+    //setlocale(LC_CTYPE, "");
     MapDraft draft;
     draft = MapDraft_create(10, 10);
     MapDraft_createRoom(&draft, 5, 5, 0, 1);
@@ -97,7 +97,7 @@ int main() {
             int s = cell->south;
             int w = cell->west;
             if (cell->used) {
-                if (n && e && s && w) {
+                /*if (n && e && s && w) {
                     rep = 0x253c;
                 } else if (n && e && s) {
                     rep = 0x251c;
@@ -121,15 +121,18 @@ int main() {
                     rep = 0x2502;
                 } else {
                     rep = 0x256c;
-                }
-                    
-                wprintf(L"%lc", rep);
+                }*/
+                printf("#");
+                //wprintf(L"%lc", rep);
             } else {
-                wprintf(L"%lc", 0x0020);
+                printf(" ");
+                //wprintf(L"%lc", 0x0020);
             }
         }
-        wprintf(L"%lc", 0x0085);
+        printf("\n");
+        //wprintf(L"%lc", 0x0085);
     }
-    wprintf(L"%lc", 0x0085);
+    printf("\n");
+    //wprintf(L"%lc", 0x0085);
     return 0;
 }
