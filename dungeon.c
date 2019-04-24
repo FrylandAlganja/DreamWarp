@@ -50,8 +50,8 @@ void dig_room(Map *map, int x, int y, int w, int h) {
 
 Map Map_createDungeon(int max_rooms) {
     DungeonValues vals;
-    vals.room_width = 15;
-    vals.room_height = 9;
+    vals.room_width = 30;
+    vals.room_height = 18;
     vals.min_x = 0;
     vals.min_y = 0;
     vals.max_x = 0;

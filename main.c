@@ -249,7 +249,7 @@ int main(int argc, char ** argv)
             Entity *new_room = &map.rooms[i];
             if (camera.room != new_room
                 && collides(u, new_room)) {
-                
+                camera.room = new_room;/*
                 if (bottom(u) > bottom(new_room) && u->vy < 0) {
                     camera.transitioning = NORTH;
                     u->y = bottom(new_room) - u->h;
@@ -267,7 +267,7 @@ int main(int argc, char ** argv)
                     camera.old_room = camera.room;
                     camera.room = new_room;
                     break;
-                }
+                }*/
             }
         }
     }
