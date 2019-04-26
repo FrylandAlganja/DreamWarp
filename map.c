@@ -31,6 +31,18 @@ Entity *Map_addRoom(Map *map) {
     return &map->rooms[map->room_count - 1];
 }
 
+void Map_digRoom(Map *map, int x, int y, int w, int h) {
+    for (int j = y; j < y + h; j++) {
+        for (int i = x; i < x + w; i++) {
+            if (j == y || i == x || j == y + h - 1 || i == x + w - 1) {
+                Map_setTile(map, i, j, 2);
+            } else {
+                Map_setTile(map, i, j, 1);
+            }
+        }
+    }
+}
+
 void Map_free(Map *map) {
     free(map->tiles);
 }

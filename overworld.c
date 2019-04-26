@@ -25,10 +25,11 @@ struct MapDraftStruct {
 
 int MapDraft_createRoom(MapDraft *map_draft, int x, int y, int entrance_dir, int chance) {
     RoomDraft *cell = &map_draft->cells[y * map_draft->w + x];
-    chance = chance + 1;
+    //chance = chance + 1;
     if (cell->used) {
         return 0;
     }
+    map_draft->room_count++;
     cell->used = true;
 
     if (entrance_dir == NORTH) {
@@ -83,20 +84,56 @@ void MapDraft_free(MapDraft *draft) {
     free(draft->cells);
 }
 
-int main() {
-    //setlocale(LC_CTYPE, "");
+Map Map_createWorld() {
+    int room_width = 15;
+    int room_height = 9;
     MapDraft draft;
-    draft = MapDraft_create(10, 10);
-    MapDraft_createRoom(&draft, 5, 5, 0, 1);
+    while (draft.room_count < 15) {
+        draft = MapDraft_create(10, 10);
+        MapDraft_createRoom(&draft, 5, 5, 0, 3);
+        if (draft.room_count < 15) {
+            MapDraft_free(&draft);
+        }
+    }
+    Map map = Map_create(150, 90);
     wchar_t rep;
     for (int y = 0; y < draft.h; y++) {
         for (int x = 0; x < draft.w; x++) {
             RoomDraft *cell = &draft.cells[y * draft.w + x];
+
             int n = cell->north;
             int e = cell->east;
             int s = cell->south;
             int w = cell->west;
             if (cell->used) {
+            Map_digRoom(&map,
+                        x * room_width, y * room_height,
+                        room_width, room_height);
+            if (n) {
+                Map_setTile(&map,
+                            x * room_width + floor(room_width / 2),
+                            y * room_height,
+                            1);
+            }
+            if (e) {
+                Map_setTile(&map,
+                            x * room_width + room_width - 1,
+                            y * room_height + floor(room_height / 2),
+                            1);
+            }
+            if (s) {
+                Map_setTile(&map,
+                            x * room_width + floor(room_width / 2),
+                            y * room_height + room_height - 1,
+                            1);
+            }
+            if (w) {
+                Map_setTile(&map,
+                            x * room_width,
+                            y * room_height + floor(room_height / 2),
+                            1);
+            }
+
                 /*if (n && e && s && w) {
                     rep = 0x253c;
                 } else if (n && e && s) {
@@ -134,5 +171,6 @@ int main() {
     }
     printf("\n");
     //wprintf(L"%lc", 0x0085);
-    return 0;
+    MapDraft_free(&draft);
+    return map;
 }

@@ -90,8 +90,11 @@ struct MapStruct {
     Entity rooms[MAX_ROOMS];
 };
 
+void Map_digRoom(Map *map, int x, int y, int w, int h);
+
 Map Map_create(int w, int h);
 Map Map_createDungeon(int room_count);
+Map Map_createWorld();
 void Map_free();
 void Map_setTile(Map *map, int x, int y, int type);
 Entity *Map_findVacantTile(Map *map);

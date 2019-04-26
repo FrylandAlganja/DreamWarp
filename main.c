@@ -54,7 +54,7 @@ int main(int argc, char ** argv)
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer,
   image);
 
-  Map map = Map_createDungeon(16);
+  Map map = Map_createDungeon(20);
   bmp_img img;
   bmp_img_init_df(&img, map.w * 2, map.h * 2);
   
@@ -249,7 +249,7 @@ int main(int argc, char ** argv)
             Entity *new_room = &map.rooms[i];
             if (camera.room != new_room
                 && collides(u, new_room)) {
-                camera.room = new_room;/*
+                //camera.room = new_room;
                 if (bottom(u) > bottom(new_room) && u->vy < 0) {
                     camera.transitioning = NORTH;
                     u->y = bottom(new_room) - u->h;
@@ -267,7 +267,7 @@ int main(int argc, char ** argv)
                     camera.old_room = camera.room;
                     camera.room = new_room;
                     break;
-                }*/
+                }
             }
         }
     }
