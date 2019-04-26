@@ -10,6 +10,6 @@ void init_sprites() {
   set_sprite(SPR_FLOOR, 48, 0, 48, 48);
   set_sprite(SPR_WALL, 96, 0, 48, 48);
   set_sprite(SPR_STAIR, 192, 0, 48, 48);
-  set_sprite(SPR_WIZARD, 240, 0, 48, 48);
-  set_sprite(SPR_CHICKEN, 288, 0, 24, 22);
+  set_sprite(SPR_WIZARD, 240, 0, 28, 42);
+  set_sprite(SPR_CHICKEN, 268, 0, 22, 29);
 }

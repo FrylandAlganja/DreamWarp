@@ -87,8 +87,8 @@ int main(int argc, char ** argv)
   SDL_Texture *minimap_texture = SDL_CreateTextureFromSurface(renderer, minimap_image);
 
   Entity *u = Map_addBeing(&map);
-  u->w = 48;
-  u->h = 48,
+  u->w = 28;
+  u->h = 42,
   u->speed = 8;
   u->vx = 0;
   u->vy = 0;
