@@ -28,6 +28,7 @@ Entity Entity_create() {
 }
 
 void Chicken_update(Entity *self) {
+    self->vx = self->vy = 0;
     self->action_duration += 1;
     if (self->action_duration > 30) {
         self->action = (rand() % 4) + 1;
@@ -49,9 +50,9 @@ void Chicken_update(Entity *self) {
         }
     } else if (self->action == JUMP) {
         if (self->action_duration < 4) {
-            self->y = self->y - 1;
+            self->vy = -1;
         } else if (self->action_duration < 8) {
-            self->y = self->y + 1;
+            self->vy = 1;
         } else {
             self->action_duration = -1;
             self->action = (rand() % 4) + 1;
