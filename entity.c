@@ -19,7 +19,7 @@ Entity Entity_create() {
     entity.type = 0;
     entity.active = true;
     entity.action = 0;
-    entity.action_duration = 0;
+    entity.action_duration = -1;
     entity.move_distance = 0;
     entity.facing = 1;
     entity.update = &Entity_update;

@@ -33,7 +33,7 @@ int main(int argc, char ** argv)
 {
   srand(time(0));
   int start_ticks;
-  Game.up = Game.down = Game.left = Game.right = false;
+  Game.up = Game.down = Game.left = Game.right = Game.attack = false;
   Game.tile_size = 48;
   int frame = 0;
   bool quit = false;
@@ -97,6 +97,9 @@ int main(int argc, char ** argv)
   u->x = ur_tile->x;
   u->y = ur_tile->y;
 
+  Entity ur_sword = Entity_create();
+  ur_sword.spr = SPR_SWORDW1;
+  ur_sword.h = 39;
 
   for (int i = 0; i < map.room_count; i++) {
       if (collides(u, &map.rooms[i])) {
@@ -124,6 +127,7 @@ int main(int argc, char ** argv)
   while (!quit)
   {
     start_ticks = SDL_GetTicks();
+    Game.attack = false;
     SDL_PollEvent(&event);
 
     switch (event.type)
@@ -144,6 +148,9 @@ int main(int argc, char ** argv)
             break;
           case SDLK_RIGHT:
             Game.right = true;
+            break;
+          case SDLK_SPACE:
+            Game.attack = true;
             break;
           case SDLK_ESCAPE:
             quit = true;
@@ -184,8 +191,14 @@ int main(int argc, char ** argv)
     if (Game.right) {
       u->vx = u->speed;
     }
+    if (Game.attack) {
+        u->action = ATTACK;
+    }
 
     for (int i = 0; i < map.being_count; i++) {
+        if (map.beings[i].active == false) {
+            continue;
+        }
         map.beings[i].update(&map.beings[i]);
         if (camera.transitioning) {
             break;
@@ -243,6 +256,29 @@ int main(int argc, char ** argv)
             }
         }
     }
+
+    if (u->action == ATTACK) {
+        u->action_duration += 1;
+        if (u->action_duration < 3) {
+            ur_sword.spr = SPR_SWORDW1;
+            ur_sword.w = 17;
+            ur_sword.x = u->x - 17;
+            ur_sword.y = u->y;
+        } else if (u->action_duration < 6) {
+            ur_sword.spr = SPR_SWORDW2;
+            ur_sword.w = 24;
+            ur_sword.x = u->x - 24;
+            ur_sword.y = u->y;
+        } else if (u->action_duration < 9) {
+            ur_sword.spr = SPR_SWORDW3;
+            ur_sword.w = 21;
+            ur_sword.x = u->x - 21;
+            ur_sword.y = u->y;
+        } else {
+            u->action_duration = -1;
+            u->action = 0;
+        }
+    }
     
     if (!camera.transitioning) {
         for (int i = 0; i < map.room_count; i++) {
@@ -282,6 +318,11 @@ int main(int argc, char ** argv)
     }
     for (int i = 0; i < map.being_count; i++) {
         draw_entity(&map.beings[i], renderer, texture, &dst);
+    }
+    if (u->action == ATTACK) {
+        draw_entity(&ur_sword, renderer, texture, &dst);
+        printf("%d, %d\n", ur_sword.x, u->x);
+        printf("%d, %d\n", ur_sword.y, u->y);
     }
     SDL_RenderCopy(renderer, minimap_texture, NULL, &minimap_dst);
     dst.x = floor(u->x / 24) + minimap_dst.x;

@@ -10,6 +10,9 @@
 #define SPR_STAIR 4
 #define SPR_WIZARD 5
 #define SPR_CHICKEN 6
+#define SPR_SWORDW1 7
+#define SPR_SWORDW2 8
+#define SPR_SWORDW3 9
 
 #define MAX_BEINGS 500
 #define MAX_ROOMS 50
@@ -22,8 +25,9 @@
 #define STAND 1
 #define JUMP 2
 #define MOVE 3
+#define ATTACK 4
 
-SDL_Rect sprites[7];
+SDL_Rect sprites[10];
 void init_sprites();
 
 typedef struct PointStruct Point;
@@ -102,7 +106,7 @@ Entity *Map_addBeing(Map *map);
 Entity *Map_addRoom(Map *map);
 
 struct GameStruct {
-    bool up, down, left, right;
+    bool up, down, left, right, attack;
     int window_width;
     int window_height;
     int tile_size;
