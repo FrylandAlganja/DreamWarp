@@ -67,6 +67,6 @@ void center_camera(Entity *entity) {
 void Entity_dst(SDL_Rect *dst, Entity *entity) {
     dst->x = entity->x - camera.x;
     dst->y = entity->y - camera.y;
-    dst->w = entity->w;
-    dst->h = entity->h;
+    dst->w = sprites[entity->spr].w;
+    dst->h = sprites[entity->spr].h;
 }
