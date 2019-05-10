@@ -17,4 +17,8 @@ void init_sprites() {
   set_sprite(SPR_SWORDW3, 331, 0, 21, 39);
   set_sprite(SPR_GOBLIN, 352, 0, 24, 44);
   set_sprite(SPR_SEAGULL, 376, 0, 28, 24);
+  set_sprite(SPR_SWORDN, 404, 0, 10, 47);
+  set_sprite(SPR_SWORDS, 414, 0, 10, 47);
+  set_sprite(SPR_SWORDE, 424, 0, 47, 10);
+  set_sprite(SPR_SWORDW, 471, 0, 47, 10);
 }

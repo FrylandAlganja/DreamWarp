@@ -15,6 +15,10 @@
 #define SPR_SWORDW3 9
 #define SPR_GOBLIN 10
 #define SPR_SEAGULL 11
+#define SPR_SWORDN 12
+#define SPR_SWORDS 13
+#define SPR_SWORDE 14
+#define SPR_SWORDW 15
 
 #define MAX_BEINGS 500
 #define MAX_ROOMS 50
@@ -29,7 +33,7 @@
 #define MOVE 3
 #define ATTACK 4
 
-SDL_Rect sprites[12];
+SDL_Rect sprites[16];
 void init_sprites();
 
 typedef struct PointStruct Point;

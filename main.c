@@ -98,8 +98,7 @@ int main(int argc, char ** argv)
   u->y = ur_tile->y;
 
   Entity ur_sword = Entity_create();
-  ur_sword.spr = SPR_SWORDW1;
-  ur_sword.h = 39;
+  ur_sword.spr = SPR_SWORDN;
 
   for (int i = 0; i < map.room_count; i++) {
       if (collides(u, &map.rooms[i])) {
@@ -181,15 +180,19 @@ int main(int argc, char ** argv)
 
     if (Game.up) {
       u->vy = -u->speed;
+      u->facing = NORTH;
     }
     if (Game.down) {
       u->vy = u->speed;
+      u->facing = SOUTH;
     }
     if (Game.left) {
       u->vx = -u->speed;
+      u->facing = WEST;
     }
     if (Game.right) {
       u->vx = u->speed;
+      u->facing = EAST;
     }
     if (Game.attack) {
         u->action = ATTACK;
@@ -259,21 +262,39 @@ int main(int argc, char ** argv)
 
     if (u->action == ATTACK) {
         u->action_duration += 1;
-        if (u->action_duration < 3) {
-            ur_sword.spr = SPR_SWORDW1;
-            ur_sword.w = 17;
-            ur_sword.x = u->x - 17;
-            ur_sword.y = u->y;
-        } else if (u->action_duration < 6) {
-            ur_sword.spr = SPR_SWORDW2;
-            ur_sword.w = 24;
-            ur_sword.x = u->x - 24;
-            ur_sword.y = u->y;
-        } else if (u->action_duration < 9) {
-            ur_sword.spr = SPR_SWORDW3;
-            ur_sword.w = 21;
-            ur_sword.x = u->x - 21;
-            ur_sword.y = u->y;
+        if (u->action_duration < 9) {
+            switch (u->facing) {
+                case NORTH:
+                    ur_sword.spr = SPR_SWORDN;
+                    ur_sword.w = 10;
+                    ur_sword.h = 47;
+                    ur_sword.x = u->x + (u->w / 2) - (ur_sword.w / 2);
+                    ur_sword.y = u->y - 47;
+                    break;
+                case EAST:
+                    ur_sword.spr = SPR_SWORDE;
+                    ur_sword.w = 47;
+                    ur_sword.h = 10;
+                    ur_sword.x = u->x + u->w;
+                    ur_sword.y = u->y + (u->h / 2) - (ur_sword.h / 2);
+                    break;
+                case SOUTH:
+                    ur_sword.spr = SPR_SWORDS;
+                    ur_sword.w = 10;
+                    ur_sword.h = 47;
+                    ur_sword.x = u->x + (u->w / 2) - (ur_sword.w / 2);
+                    ur_sword.y = u->y + u->h;
+                    break;
+                case WEST:
+                    ur_sword.spr = SPR_SWORDW;
+                    ur_sword.w = 47;
+                    ur_sword.h = 10;
+                    ur_sword.x = u->x - 47;
+                    ur_sword.y = u->y + (u->h / 2) - (ur_sword.h / 2);
+                    break;
+                default:
+                    break;
+            }
         } else {
             u->action_duration = -1;
             u->action = 0;
