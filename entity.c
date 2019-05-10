@@ -63,9 +63,9 @@ void Chicken_update(Entity *self) {
 
 Entity Chicken_create() {
     Entity chicken = Entity_create();
-    chicken.spr = SPR_CHICKEN;
-    chicken.w = 22;
-    chicken.h = 29;
+    chicken.spr = SPR_SEAGULL;
+    chicken.w = 24;
+    chicken.h = 28;
     chicken.speed = 4;
     chicken.action = STAND;
     chicken.update = &Chicken_update;

@@ -87,12 +87,12 @@ int main(int argc, char ** argv)
   SDL_Texture *minimap_texture = SDL_CreateTextureFromSurface(renderer, minimap_image);
 
   Entity *u = Map_addBeing(&map);
-  u->w = 28;
-  u->h = 42,
+  u->w = 24;
+  u->h = 44,
   u->speed = 8;
   u->vx = 0;
   u->vy = 0;
-  u->spr = SPR_WIZARD;
+  u->spr = SPR_GOBLIN;
   Entity *ur_tile = Map_findVacantTile(&map);
   u->x = ur_tile->x;
   u->y = ur_tile->y;
