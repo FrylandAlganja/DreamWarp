@@ -36,7 +36,7 @@ void update_min_max(DungeonValues *vals, Entity *new_room) {
     }
 }
 
-Map Map_createDungeon(int max_rooms) {
+Map Map_createDungeon(int max_rooms, GameS *Game) {
     DungeonValues vals;
     vals.room_width = 15;
     vals.room_height = 9;
@@ -123,20 +123,20 @@ Map Map_createDungeon(int max_rooms) {
         Entity *d = &(vals.doors[room_id]);
         r->x -= vals.min_x;
         r->y -= vals.min_y;
-        Map_digRoom(&dungeon, r->x, r->y, r->w, r->h);
+        Map_digRoom(&dungeon, r->x, r->y, r->w, r->h, Game);
         // The following adds a room to the real map, and adjusts it's
         // coordinates to measure in pixels instead of tiles
         Entity *final_room = Map_addRoom(&dungeon);
-        final_room->x = r->x * Game.tile_size;
-        final_room->y = r->y * Game.tile_size;
-        final_room->w = r->w * Game.tile_size;
-        final_room->h = r->h * Game.tile_size;
+        final_room->x = r->x * Game->tile_size;
+        final_room->y = r->y * Game->tile_size;
+        final_room->w = r->w * Game->tile_size;
+        final_room->h = r->h * Game->tile_size;
         if (room_id > 0) {
             d->x -= vals.min_x;
             d->y -= vals.min_y;
             for (int y = d->y; y <= bottom(d); y++) {
                 for (int x = d->x; x <= right(d); x++) {
-                    Map_setTile(&dungeon, x, y, 1);
+                    Map_setTile(&dungeon, x, y, 1, Game);
                 }
             }
         }

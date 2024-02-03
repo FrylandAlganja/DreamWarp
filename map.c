@@ -30,13 +30,13 @@ Entity *Map_addRoom(Map *map) {
     return &map->rooms[map->room_count - 1];
 }
 
-void Map_digRoom(Map *map, int x, int y, int w, int h) {
+void Map_digRoom(Map *map, int x, int y, int w, int h, GameS *Game) {
     for (int j = y; j < y + h; j++) {
         for (int i = x; i < x + w; i++) {
             if (j == y || i == x || j == y + h - 1 || i == x + w - 1) {
-                Map_setTile(map, i, j, 2);
+                Map_setTile(map, i, j, 2, Game);
             } else {
-                Map_setTile(map, i, j, 1);
+                Map_setTile(map, i, j, 1, Game);
             }
         }
     }
@@ -46,12 +46,12 @@ void Map_free(Map *map) {
     free(map->tiles);
 }
 
-void Map_setTile(Map *map, int x, int y, int type) {
+void Map_setTile(Map *map, int x, int y, int type, GameS *Game) {
     Entity tile;
-    tile.x = x * Game.tile_size;
-    tile.y = y * Game.tile_size;
-    tile.w = Game.tile_size;
-    tile.h = Game.tile_size;
+    tile.x = x * Game->tile_size;
+    tile.y = y * Game->tile_size;
+    tile.w = Game->tile_size;
+    tile.h = Game->tile_size;
     tile.tile_x = x;
     tile.tile_y = y;
     tile.type = type;

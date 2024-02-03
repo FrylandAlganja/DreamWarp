@@ -33,8 +33,7 @@
 #define MOVE 3
 #define ATTACK 4
 
-SDL_Rect sprites[16];
-void init_sprites();
+void init_sprites(SDL_Rect *sprites);
 
 typedef struct PointStruct Point;
 struct PointStruct {
@@ -46,6 +45,15 @@ struct BoxStruct {
     int x, y;
     int w, h;
 };
+
+typedef struct GameStruct GameS;
+struct GameStruct {
+    bool up, down, left, right, attack;
+    int window_width;
+    int window_height;
+    int tile_size;
+};
+
 
 typedef struct EntityStruct Entity;
 
@@ -74,9 +82,8 @@ int right(Entity *entity);
 bool collides(Entity *a, Entity *b);
 Point direction_delta(int direction);
 
-void Entity_dst(SDL_Rect *dst, Entity *entity);
-
-struct Camera {
+typedef struct CameraStruct Camera;
+struct CameraStruct {
   int x, y;
   bool bounded;
   int x_speed;
@@ -84,10 +91,11 @@ struct Camera {
   int transitioning;
   Entity *room;
   Entity *old_room;
-} camera;
+};
 
 void init_camera();
-void center_camera(Entity *entity);
+void center_camera(Camera *camera, Entity *entity, GameS *Game);
+void Entity_dst(SDL_Rect *dst, Entity *entity, Camera *camera, SDL_Rect *sprites);
 
 typedef struct MapStruct Map;
 
@@ -100,22 +108,15 @@ struct MapStruct {
     Entity rooms[MAX_ROOMS];
 };
 
-void Map_digRoom(Map *map, int x, int y, int w, int h);
+void Map_digRoom(Map *map, int x, int y, int w, int h, GameS *Game);
 
 Map Map_create(int w, int h);
-Map Map_createDungeon(int room_count);
+Map Map_createDungeon(int room_count, GameS *Game);
 Map Map_createWorld();
 void Map_free();
-void Map_setTile(Map *map, int x, int y, int type);
+void Map_setTile(Map *map, int x, int y, int type, GameS *Game);
 Entity *Map_findVacantTile(Map *map);
 Entity *Map_addBeing(Map *map);
 Entity *Map_addRoom(Map *map);
-
-struct GameStruct {
-    bool up, down, left, right, attack;
-    int window_width;
-    int window_height;
-    int tile_size;
-} Game;
 
 #endif

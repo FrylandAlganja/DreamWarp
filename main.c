@@ -16,8 +16,8 @@ struct CollisionList {
 } collision_list;
 
 void draw_entity(Entity *entity, SDL_Renderer *renderer, SDL_Texture *texture,
-                 SDL_Rect *dst) {
-    Entity_dst(dst, entity);
+                 SDL_Rect *dst, Camera *camera, SDL_Rect *sprites) {
+    Entity_dst(dst, entity, camera, sprites);
     SDL_RenderCopy(renderer, texture, &sprites[entity->spr], dst);
 }
 
@@ -33,14 +33,17 @@ int main(int argc, char ** argv)
 {
   srand(time(0));
   int start_ticks;
+  GameS Game;
   Game.up = Game.down = Game.left = Game.right = Game.attack = false;
   Game.tile_size = 48;
   int frame = 0;
   bool quit = false;
   Game.window_width = 720;
   Game.window_height = 432;
-  init_sprites();
-  init_camera();
+  SDL_Rect sprites[16];
+  init_sprites(sprites);
+  Camera camera;
+  init_camera(&camera);
   SDL_Event event;
 
   SDL_Init(SDL_INIT_VIDEO);
@@ -54,7 +57,7 @@ int main(int argc, char ** argv)
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer,
   image);
 
-  Map map = Map_createDungeon(20);
+  Map map = Map_createDungeon(20, &Game);
   bmp_img img;
   bmp_img_init_df(&img, map.w * 2, map.h * 2);
   
@@ -329,19 +332,19 @@ int main(int argc, char ** argv)
         }
     }
 
-    center_camera(u);
+    center_camera(&camera, u, &Game);
 
     SDL_RenderClear(renderer);
     for (int i = 0; i < (map.w * map.h); i++) {
         if (map.tiles[i].active) {
-            draw_entity(&map.tiles[i], renderer, texture, &dst);
+            draw_entity(&map.tiles[i], renderer, texture, &dst, &camera, sprites);
         }
     }
     for (int i = 0; i < map.being_count; i++) {
-        draw_entity(&map.beings[i], renderer, texture, &dst);
+        draw_entity(&map.beings[i], renderer, texture, &dst, &camera, sprites);
     }
     if (u->action == ATTACK) {
-        draw_entity(&ur_sword, renderer, texture, &dst);
+        draw_entity(&ur_sword, renderer, texture, &dst, &camera, sprites);
         printf("%d, %d\n", ur_sword.x, u->x);
         printf("%d, %d\n", ur_sword.y, u->y);
     }

@@ -84,7 +84,7 @@ void MapDraft_free(MapDraft *draft) {
     free(draft->cells);
 }
 
-Map Map_createWorld() {
+Map Map_createWorld(GameS *Game) {
     int room_width = 15;
     int room_height = 9;
     MapDraft draft;
@@ -108,30 +108,30 @@ Map Map_createWorld() {
             if (cell->used) {
             Map_digRoom(&map,
                         x * room_width, y * room_height,
-                        room_width, room_height);
+                        room_width, room_height, Game);
             if (n) {
                 Map_setTile(&map,
                             x * room_width + floor(room_width / 2),
                             y * room_height,
-                            1);
+                            1, Game);
             }
             if (e) {
                 Map_setTile(&map,
                             x * room_width + room_width - 1,
                             y * room_height + floor(room_height / 2),
-                            1);
+                            1, Game);
             }
             if (s) {
                 Map_setTile(&map,
                             x * room_width + floor(room_width / 2),
                             y * room_height + room_height - 1,
-                            1);
+                            1, Game);
             }
             if (w) {
                 Map_setTile(&map,
                             x * room_width,
                             y * room_height + floor(room_height / 2),
-                            1);
+                            1, Game);
             }
 
                 /*if (n && e && s && w) {
